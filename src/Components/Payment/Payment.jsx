@@ -9,16 +9,17 @@ function Payment({ onClose }) {
   const [stripePromise, setStripePromise] = useState(null);
   const [clientSecret, setClientSecret] = useState("");
   const fare = useSelector((state) => state.form.rideFare);
+  const url = import.meta.env.VITE_APP_BACKEND_API_URL;
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/checkout/config").then(async (r) => {
+    fetch(`${url}/checkout/config`).then(async (r) => {
       const { publishableKey } = await r.json();
       setStripePromise(loadStripe(publishableKey));
     });
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/checkout/create-payment-intent", {
+    fetch(`${url}/checkout/create-payment-intent`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
