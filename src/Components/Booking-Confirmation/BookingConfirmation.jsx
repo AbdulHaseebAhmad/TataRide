@@ -22,7 +22,7 @@ export default function BookingConfirmation({onClose}) {
             <FontAwesomeIcon icon={faMobile} className='text-gray text-4xl'/>
         </div>
         <div>
-            <ButtonFilled value='OK' onClick={()=>window.location.reload()}></ButtonFilled>
+            <ButtonFilled value='OK' onClick={()=>setTimeout((window.location.reload()),[1000])}></ButtonFilled>
         </div>
     </div>
   )
