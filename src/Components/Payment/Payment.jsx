@@ -42,9 +42,9 @@ function Payment({ onClose }) {
           <CheckoutForm onClose={onClose} fare={fare} />
         </Elements>
       ) : (
-        <div className="w-[300px] sm:w-[400px] lg:w-[500px] bg-white flex flex-col gap-[2em]  rounded-[5px] mx-auto items-center p-4 ">
+        <div className="font-sans w-[300px] sm:w-[400px] lg:w-[500px] bg-white flex flex-col gap-[2em]  rounded-[5px] mx-auto items-center p-4 ">
           <p className="text-primary text-[1em] lg:text-[1.25em] text-center">
-            We have encountered an error making a payment, please try again later
+            Loading Payment Portal..
           </p>
           <ButtonFilled value="Close" onClick={onClose}></ButtonFilled>
         </div>

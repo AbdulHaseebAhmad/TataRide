@@ -3,21 +3,23 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons/faPlus";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { autoCompleteAddres, setIdRoute } from "../../Store/google-locations/Actions";
+import {
+  autoCompleteAddres,
+  setIdRoute,
+} from "../../Store/google-locations/Actions";
 import { setDate, setTime } from "../../Store/Form/Actions";
-
+import { setDropOff, setPickUp } from "../../Store/Data/Reducer";
 
 export default function StepOne() {
-
-  const currentDate = useSelector((state)=>state.form.rideDate);
-
+  const currentDate = useSelector((state) => state.form.rideDate);
 
   const [appendDestination, setAppendDestination] = useState(false);
   const [pickUpType, setPickUpType] = useState("bookForNow");
   const autoCompleteLocations = useSelector((state) => state.location.data);
   const idRoute = useSelector((state) => state.location.idRoute);
   const locationRoute = useSelector((state) => state.location.locationRoute);
-
+  const pr = useSelector((state) => state.data["pick-up"]);
+  const dr = useSelector((state) => state.data["drop-off"]);
   const [currentLocations, setCurrentLocations] = useState([]);
   const [destinationLocations, setDestinationLocations] = useState([]);
 
@@ -32,27 +34,33 @@ export default function StepOne() {
 
   useEffect(() => {
     setCurrentLocations(autoCompleteLocations?.currentLocation);
-    setDestinationLocations(autoCompleteLocations?.destinationLocation)
+    setDestinationLocations(autoCompleteLocations?.destinationLocation);
     console.log(idRoute);
     console.log(autoCompleteLocations);
     console.log(locationRoute);
-  }, [autoCompleteLocations, idRoute, locationRoute])
+  }, [autoCompleteLocations, idRoute, locationRoute]);
 
   const handleChangeEvent = (e) => {
-    setCount(count + 1)
-    const { value, name } = e.target
-    if (name === 'currentLocation') {
+    setCount(count + 1);
+    const { value, name } = e.target;
+    if (name === "currentLocation") {
       setCurrentLoaction(value);
     }
-    if (name === 'destinationLocation') {
+    if (name === "destinationLocation") {
       setDestinationLocation(value);
     }
 
     if (count > 1) {
-      setCount(0)
-      dispatch(autoCompleteAddres(value, name))
+      setCount(0);
+      dispatch(autoCompleteAddres(value, name));
     }
-  }
+  };
+
+  useEffect(() => {
+    // console.log({"pick-up":currentLocation,"drop-off":destinationLocation},'Pickup&dropPoint')
+    console.log(pr);
+    console.log(dr);
+  }, [pr, dr]);
 
   return (
     <div className="font-sans text-[16px] md:text-[13px] lg:text-[15px] xl:text-[17px] pt-[1.8em] px-[1em] flex flex-col gap-[1em]">
@@ -84,30 +92,56 @@ export default function StepOne() {
               value={currentLocation}
               placeholder="Add Pickup (required)"
               onChange={handleChangeEvent}
-              onFocus={() => { setCurrentSearch(true) }}
+              onFocus={() => {
+                setCurrentSearch(true);
+              }}
             />
             <div className="absolute z-20 h-auto max-h-[10em] bg-white  left-0 right-0 top-full overflow-y-scroll">
-              {
-                currentSearch && currentLocations?.length > 0 ? currentLocations?.map(({ placePrediction: {
-                  placeId,
-                  structuredFormat: {
-                    mainText = {},
-                    secondaryText = {}
-                  } = {}
-                } = {}
-                }, index) => {
-                  const text = mainText?.text || "";
-                  const sText = secondaryText?.text || "";
-                  return (<button type="button" key={index} onClick={() => { setCurrentSearch(false); setCurrentLoaction(`${text}  ${sText}`); dispatch(setIdRoute(placeId, "currentLocation")) }} className="text-start px-[0.3em] w-full py-[0.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] cursor-pointer hover:bg-primary hover:bg-opacity-[0.2]">
-                    <p className="font-sans font-[550] text-[1em] tracking-[0.02em] text-primary">{text}</p>
-                    <small className="font-sans font-[600] text-[0.7em] tracking-[0.02em] text-lightblack">{sText}</small>
-                  </button>
+              {currentSearch && currentLocations?.length > 0
+                ? currentLocations?.map(
+                    (
+                      {
+                        placePrediction: {
+                          placeId,
+                          structuredFormat: {
+                            mainText = {},
+                            secondaryText = {},
+                          } = {},
+                        } = {},
+                      },
+                      index
+                    ) => {
+                      const text = mainText?.text || "";
+                      const sText = secondaryText?.text || "";
+                      return (
+                        <button
+                          type="button"
+                          key={index}
+                          onClick={() => {
+                            setCurrentSearch(false);
+                            setCurrentLoaction(`${text}  ${sText}`);
+                            dispatch(setIdRoute(placeId, "currentLocation"));
+                            dispatch(setPickUp(`${text}  ${sText}`));
+                          }}
+                          className="text-start px-[0.3em] w-full py-[0.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] cursor-pointer hover:bg-primary hover:bg-opacity-[0.2]"
+                        >
+                          <p className="font-sans font-[550] text-[1em] tracking-[0.02em] text-primary">
+                            {text}
+                          </p>
+                          <small className="font-sans font-[600] text-[0.7em] tracking-[0.02em] text-lightblack">
+                            {sText}
+                          </small>
+                        </button>
+                      );
+                    }
                   )
-                }) :
-                  currentSearch && <div className="px-[0.3em] w-full h-[3.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] ">
-                    <p className="font-sans font-[500] text-[1em] tracking-[0.02em] text-primary">Enter Another Location</p>
-                  </div>
-              }
+                : currentSearch && (
+                    <div className="px-[0.3em] w-full h-[3.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] ">
+                      <p className="font-sans font-[500] text-[1em] tracking-[0.02em] text-primary">
+                        Enter Another Location
+                      </p>
+                    </div>
+                  )}
             </div>
           </div>
         </div>
@@ -129,31 +163,57 @@ export default function StepOne() {
               name="destinationLocation"
               placeholder="Add Destination (required)"
               onChange={handleChangeEvent}
-              onFocus={() => { setDestinationSearch(true) }}
+              onFocus={() => {
+                setDestinationSearch(true);
+              }}
             />
             <div className="absolute z-20 h-auto max-h-[10em] bg-white  left-0 right-0 top-full overflow-y-scroll">
-              {
-                destinationLocations?.length > 0 && destinationSearch ? destinationLocations?.map(({ placePrediction: {
-                  placeId,
-                  structuredFormat: {
-                    mainText = {},
-                    secondaryText = {}
-                  } = {}
-                } = {}
-                }, index) => {
-                  const text = mainText?.text || "";
-                  const sText = secondaryText?.text || "";
-                  return (
-                    <button key={index} onClick={() => { setDestinationSearch(false); setDestinationLocation(`${text} ${sText}`); dispatch(setIdRoute(placeId, "destinationLocation"));}} className="text-start px-[0.3em] w-full py-[0.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] cursor-pointer hover:bg-primary hover:bg-opacity-[0.2]">
-                      <p className="font-sans font-[550] text-[1em] tracking-[0.02em] text-primary">{text && text}</p>
-                      <small className="font-sans font-[600] text-[0.7em] tracking-[0.02em] text-lightblack">{sText && sText}</small>
-                    </button>
+              {destinationLocations?.length > 0 && destinationSearch
+                ? destinationLocations?.map(
+                    (
+                      {
+                        placePrediction: {
+                          placeId,
+                          structuredFormat: {
+                            mainText = {},
+                            secondaryText = {},
+                          } = {},
+                        } = {},
+                      },
+                      index
+                    ) => {
+                      const text = mainText?.text || "";
+                      const sText = secondaryText?.text || "";
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setDestinationSearch(false);
+                            setDestinationLocation(`${text} ${sText}`);
+                            dispatch(
+                              setIdRoute(placeId, "destinationLocation")
+                            );
+                            dispatch(setDropOff(`${text} ${sText}`));
+                          }}
+                          className="text-start px-[0.3em] w-full py-[0.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] cursor-pointer hover:bg-primary hover:bg-opacity-[0.2]"
+                        >
+                          <p className="font-sans font-[550] text-[1em] tracking-[0.02em] text-primary">
+                            {text && text}
+                          </p>
+                          <small className="font-sans font-[600] text-[0.7em] tracking-[0.02em] text-lightblack">
+                            {sText && sText}
+                          </small>
+                        </button>
+                      );
+                    }
                   )
-                }) :
-                  destinationSearch && <div className="px-[0.3em] w-full h-[3.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] ">
-                    <p className="font-sans font-[500] text-[1em] tracking-[0.02em] text-primary">Enter Another Location</p>
-                  </div>
-              }
+                : destinationSearch && (
+                    <div className="px-[0.3em] w-full h-[3.5em] border-b border-b-1 border-lightgrey rounded-sm flex flex-col justify-center gap-[0.25em] ">
+                      <p className="font-sans font-[500] text-[1em] tracking-[0.02em] text-primary">
+                        Enter Another Location
+                      </p>
+                    </div>
+                  )}
             </div>
           </div>
         </div>
@@ -214,7 +274,7 @@ export default function StepOne() {
             className="h-[1.1em] w-[1.1em] cursor-pointer  accent-green-600"
             value="bookForNow"
             onChange={(e) => setPickUpType(e.target.value)}
-            checked={pickUpType === 'bookForNow'}
+            checked={pickUpType === "bookForNow"}
           />
           <p className="font-sans text-[#000] text-[1em] font-[400] tracking-[0.02em]">
             Book for now
@@ -226,8 +286,7 @@ export default function StepOne() {
             className="h-[1.1em] w-[1.1em] cursor-pointer accent-green-600"
             value="bookForLater"
             onChange={(e) => setPickUpType(e.target.value)}
-            checked={pickUpType === 'bookForLater'}
-
+            checked={pickUpType === "bookForLater"}
           />
           <p className="font-sans text-[#000] text-[1em] font-[400] tracking-[0.02em]">
             Book for Later
@@ -235,25 +294,28 @@ export default function StepOne() {
         </div>
       </div>
 
-      {
-        pickUpType === 'bookForLater' && <div className="w-full max-w-[400px] flex gap-[0.2em] items-start">
+      {pickUpType === "bookForLater" && (
+        <div className="w-full max-w-[400px] flex gap-[0.2em] items-start">
           <input
             id="date"
             className="px-[0.3em] w-full h-[2.5em] border border-1 border-lightgrey rounded-sm focus:border-2 focus:border-primary outline-none cursor-pointer"
             type="date"
             value={currentDate}
-            onChange={(e)=>{dispatch(setDate(e.target.value))}}
+            onChange={(e) => {
+              dispatch(setDate(e.target.value));
+            }}
           />
           <input
             id="cvv"
             className="px-[0.3em] w-full h-[2.5em] border border-1 border-lightgrey rounded-sm focus:border-2 focus:border-primary outline-none cursor-pointer"
             type="time"
             //value={currentTime}
-            onChange={(e)=>{dispatch(setTime(e.target.value))}}
-
+            onChange={(e) => {
+              dispatch(setTime(e.target.value));
+            }}
           />
         </div>
-      }
+      )}
     </div>
   );
 }

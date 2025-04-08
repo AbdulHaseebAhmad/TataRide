@@ -8,7 +8,8 @@ export default {
         "lightgrey":"#C4C4C4",
         "lightblack":"#373737",
         "darkblack":"#000000",
-        "bgwhite":"#FFFFFF"
+        "bgwhite":"#FFFFFF",
+        "gray":"#757575"
 
       },
       fontFamily: {

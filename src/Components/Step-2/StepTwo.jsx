@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import flag from "../../assets/au-flag.png";
 import {useDispatch, useSelector} from "react-redux";
 import { setfare } from "../../Store/Form/Actions";
+import { setName, setPhone } from "../../Store/Data/Reducer";
 
 export default function StepTwo() {
   const dispatch = useDispatch();
@@ -74,6 +75,7 @@ export default function StepTwo() {
             className="px-[0.3em] w-full h-[2.5em] border border-1 border-lightgrey rounded-sm focus:border-2 focus:border-primary outline-none cursor-pointer"
             type="text"
             placeholder="Passenger Name"
+            onChange={(e)=>dispatch(setName(e.target.value))}
           />
         </div>
 
@@ -90,6 +92,8 @@ export default function StepTwo() {
             className="px-[0.3em] w-[90%] h-[2.5em] border border-1 border-lightgrey rounded-sm focus:border-2 focus:border-primary outline-none cursor-pointer"
             type="text"
             placeholder="Contact Number"
+            onChange={(e)=>dispatch(setPhone(e.target.value))}
+
           />
         </div>
       </div>
