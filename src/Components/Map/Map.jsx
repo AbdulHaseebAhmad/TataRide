@@ -52,14 +52,26 @@ function Map() {
 
 
 
+  const broomeBounds = {
+    north: -17.900,   // top
+    south: -18.015,   // bottom
+    east: 122.300,    // right
+    west: 122.125,
+  }
 
   return (
     <LoadScript googleMapsApiKey={gKey}>
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={mapCenter || { lat: -35.2809, lng: 149.1300 }
-      } 
+        center={mapCenter || { lat: -17.9614, lng: 122.2359 }} 
         zoom={13}
+        options={{
+          restriction: {
+            latLngBounds: broomeBounds,
+            strictBounds: true
+          },
+          gestureHandling: "greedy"
+        }}
       >
 
         {startLocation && <Marker position={startLocation} />}
