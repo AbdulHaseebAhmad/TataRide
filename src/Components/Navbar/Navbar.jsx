@@ -8,6 +8,7 @@ import MobileMenu from "../Mobile-Menu/MobileMenu";
 export default function Navbar() {
 
     const [showMenu,setShowMenu] = useState(false);
+    const hideButtons = ["/place-order"].includes(location.pathname)
 
   return (
     <>
@@ -48,6 +49,7 @@ export default function Navbar() {
         </a>
       </div>
 
+      {!hideButtons && (
       <div className="flex items-center justify-end gap-[1.4em] md:gap-[1.2em] lg:gap-5 text-[14px] md:text-4 lg:text-[18px]">
         <button className="py-[0.5em] md:px-[0.8em] px-[1em] lg:px-[1em] font-[500] border border-2 border-primary tracking-[0.25px] rounded-[4px] text-primary shadow-xl cursor-pointer">
           Log in
@@ -57,6 +59,7 @@ export default function Navbar() {
           Sign up
         </button>
       </div>
+      )}
     </div>
     <div className="hidden md:flex md:justify-between text-[16px] md:text-[13px] lg:text-[15px] xl:text-[16px] md:bg-lightblack md:px-12 md:py-[0.6em]">
       <div className="text-[1em] flex gap-[1.25em] items-center">

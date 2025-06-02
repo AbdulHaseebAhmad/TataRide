@@ -14,6 +14,13 @@ import {
 
 const url = import.meta.env.VITE_APP_BACKEND_API_URL;
 
+const BOUNDS = {
+    north: -17.900,
+    south: -18.015,
+    east: 122.300,
+    west: 122.125,
+};
+
 
 const autoCompleteAddres = (input,name) => {
     return async (dispatch) => {
@@ -22,7 +29,16 @@ const autoCompleteAddres = (input,name) => {
             const response = await axios.post(`${url}/auto-complete-location`,
                 { input: input }
             )
-            dispatch({ type: FETCHING_LOCATION_SUCCESSFUL, payload: {name,locations:response?.data} });
+
+            const filtered = (response?.data || []).filter(loc =>
+                loc?.location && isWithinBroome(loc.location)
+            );
+
+            if (filtered.length === 0) {
+                alert("No locations found within Broome.");
+            }
+
+            dispatch({ type: FETCHING_LOCATION_SUCCESSFUL, payload: {name,locations:filtered} });
         }
         catch (e) {
             dispatch({ type: FETCHING_LOCATION_FAILED, payload: e.message })
