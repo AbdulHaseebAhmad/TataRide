@@ -65,7 +65,7 @@ export default function Navbar() {
       <div className="text-[1em] flex gap-[1.25em] items-center">
         <div className="flex gap-[0.6em] text-bgwhite items-center">
           <FontAwesomeIcon icon={faPhone} className=" text-[1em]"/>
-          <p className="text-[1em] font-sans  font-[400] tracking-[0.025em]">32 11458</p>
+          <p className="text-[1em] font-sans  font-[400] tracking-[0.025em]">08 6117 5802</p>
         </div>
  
         <div className="flex gap-[6em] items-center py-[0.3em] px-[0.4em] bg-bgwhite rounded-md">
